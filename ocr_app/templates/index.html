@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OCR Text Extractor - Green & White Mobile Friendly</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #ffffff;
+            color: #2e7d32;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: #e8f5e9;
+            border-radius: 20px;
+            padding: 25px 35px;
+            box-shadow: 0 12px 25px rgba(46, 125, 50, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        h1 {
+            color: #1b5e20;
+            text-align: center;
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .subtitle {
+            text-align: center;
+            color: #388e3c;
+            font-weight: 400;
+            font-size: 1.1rem;
+            margin: 0;
+            user-select: none;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        label.upload-label {
+            background-color: #43a047;
+            color: white;
+            padding: 14px 26px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(67, 160, 71, 0.5);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            user-select: none;
+            text-align: center;
+            width: 90%;
+            max-width: 320px;
+        }
+        label.upload-label:hover {
+            background-color: #2e7d32;
+            box-shadow: 0 10px 25px rgba(46, 125, 50, 0.8);
+        }
+        button {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.6);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            user-select: none;
+            width: 90%;
+            max-width: 320px;
+        }
+        button:disabled {
+            background: #a5d6a7;
+            cursor: not-allowed;
+            box-shadow: none;
+            color: #4a7d4a;
+        }
+        button:hover:not(:disabled) {
+            background-color: #1b5e20;
+            box-shadow: 0 15px 30px rgba(27, 94, 32, 0.9);
+        }
+        h2 {
+            color: #1b5e20;
+            font-weight: 700;
+            font-size: 1.6rem;
+            margin: 0 0 10px 0;
+            text-align: center;
+        }
+        #extractedText {
+            background-color: #c8e6c9;
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 180px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            color: #1b5e20;
+            box-shadow: inset 0 0 8px rgba(30, 130, 50, 0.3);
+            overflow-y: auto;
+            max-height: 320px;
+        }
+        .loading {
+            text-align: center;
+            font-style: italic;
+            color: #2e7d32;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .error {
+            color: #d32f2f;
+            background: #ffcdd2;
+            border-radius: 12px;
+            padding: 15px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .success {
+            color: #2e7d32;
+            background: #d0f0c0;
+            border-radius: 12px;
+            padding: 15px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .preview {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(46, 125, 50, 0.3);
+            max-height: 320px;
+        }
+        .preview img {
+            width: auto;
+            max-width: 100%;
+            height: 280px;
+            border-radius: 15px;
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 20px 25px 20px;
+            }
+            h1 {
+                font-size: 1.9rem;
+            }
+            h2 {
+                font-size: 1.3rem;
+            }
+            button, label.upload-label {
+                font-size: 1rem;
+                padding: 14px 24px;
+                max-width: 100%;
+            }
+            #extractedText {
+                font-size: 0.9rem;
+                min-height: 150px;
+            }
+            .preview img {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🟢 Toro </h1>
+        <p class="subtitle">Upload any image to extract text quickly and accurately</p>
+
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label for="image" class="upload-label">📁 Choose Image</label>
+            <input type="file" id="image" name="image" accept="image/*" required />
+            <div class="preview" id="imagePreview" style="display:none;"><img src="" alt="Image preview" /></div>
+
+            <button type="submit" id="submitBtn">🚀 Extract Text</button>
+        </form>
+
+        <h2>📋 Extracted Text</h2>
+        <div id="extractedText">Select an image to see extracted text here...</div>
+    </div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const extractedTextDiv = document.getElementById('extractedText');
+        const imageInput = document.getElementById('image');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImageTag = imagePreview.querySelector('img');
+
+        // Show image preview
+        imageInput.addEventListener('change', e => {
+            const file = e.target.files[0];
+            if(file){
+                const reader = new FileReader();
+                reader.onload = e => {
+                    previewImageTag.src = e.target.result;
+                    imagePreview.style.display = 'flex';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewImageTag.src = '';
+                imagePreview.style.display = 'none';
+            }
+        });
+
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Processing...';
+            extractedTextDiv.textContent = '';
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if(response.ok){
+                    const result = await response.json();
+                    if(result.status === 'success'){
+                        extractedTextDiv.textContent = result.extracted_text;
+                    } else if(result.status === 'no_text'){
+                        extractedTextDiv.textContent = '⚠️ ' + result.extracted_text;
+                    }
+                } else {
+                    extractedTextDiv.textContent = '❌ Failed to extract text. Please try again.';
+                }
+            } catch(error) {
+                extractedTextDiv.textContent = '❌ Error: ' + error.message;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Extract Text';
+            }
+        });
+    </script>
+</body>
+</html>
